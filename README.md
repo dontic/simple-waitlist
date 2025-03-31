@@ -36,7 +36,16 @@ services:
       POSTGRES_USER: django
       POSTGRES_PASSWORD: django
     volumes:
+      # Mount the postgres data directory
       - ./postgresdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U django"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    # Uncomment the following to expose the Postgres port
+    # ports:
+    #   - 5432:5432
 
   django:
     image: dontic/simple-waitlist:latest
@@ -68,6 +77,18 @@ docker-compose up -d
 ```
 
 3. Access the admin panel at http://localhost:8000/admin/
+
+### Updating
+
+1. Update the image
+```
+docker compose pull
+```
+
+2. Redeploy
+```
+docker compose up -d
+```
 
 ## API Documentation
 
