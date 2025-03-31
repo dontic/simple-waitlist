@@ -13,6 +13,11 @@ services:
     volumes:
       # Mount the postgres data directory
       - ./postgresdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U django"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     # Uncomment the following to expose the Postgres port
     # ports:
     #   - 5432:5432
@@ -20,7 +25,7 @@ services:
   django:
     image: dontic/simple-waitlist:latest
     restart: unless-stopped
-    env:
+    environment:
       - DJANGO_ALLOWED_HOSTS=waitlist.mydomain.com
       - DJANGO_ALLOWED_ORIGINS=https://waitlist.mydomain.com,https://mywebsite1.com,https://mywebsite2.com
       - DJANGO_SECRET_KEY=django
