@@ -157,6 +157,7 @@ INSTALLED_APPS = [
     "authentication",  # Authentication
     # ----------------------------------- APPS ----------------------------------- #
     "waitlist",  # Waitlist App
+    "contact",  # Contact App
 ]
 
 # ---------------------------------------------------------------------------- #

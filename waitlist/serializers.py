@@ -15,7 +15,7 @@ class WaitlistItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WaitlistItem
-        fields = ["pk", "email", "waitlist", "waitlist_name"]
+        fields = ["pk", "waitlist", "waitlist_name", "email"]
         read_only_fields = ["pk", "waitlist"]
 
     def create(self, validated_data):
