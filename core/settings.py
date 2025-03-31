@@ -10,114 +10,303 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+import logging.config
+
+# Load environment variables
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-9ai@nz%p(^v137new@yi%jpys%lmb2)bndge$l_tk330@6_w#8'
+# ---------------------------------------------------------------------------- #
+#                                   DEBUGGING                                  #
+# ---------------------------------------------------------------------------- #
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DJANGO_DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = []
+# Logging
+LOGGING_CONFIG = None  # Avoid Django logging setup
+LOGGING = {
+    "version": 1,
+    # Set to True to disable Django's logging setup
+    "disable_existing_loggers": True,
+    # Define the formatters
+    "formatters": {
+        "default": {
+            "format": "%(asctime)s - %(levelname)s - %(name)s - %(module)s - %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
+    },
+    # Define the handlers
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",  # Log to console
+            "formatter": "default",  # Use the default formatter
+        }
+    },
+    # Uncomment to log with the root logger
+    # "root": {"level": "WARNING", "handlers": ["console"]},
+    "loggers": {
+        # Django logger
+        "django": {
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+        # Waitlist logger
+        "waitlist": {
+            "level": os.getenv("LOGGING_LOG_LEVEL", "DEBUG"),
+            "handlers": ["console"],
+            "propagate": False,
+        },
+        # Contact logger
+        "contact": {
+            "level": os.getenv("LOGGING_LOG_LEVEL", "DEBUG"),
+            "handlers": ["console"],
+            "propagate": False,
+        },
+        # Utils logger
+        "utils": {
+            "level": os.getenv("LOGGING_LOG_LEVEL", "DEBUG"),
+            "handlers": ["console"],
+            "propagate": False,
+        },
+    },
+}
+logging.config.dictConfig(LOGGING)
 
 
-# Application definition
+# ---------------------------------------------------------------------------- #
+#                                  CONNECTIONS                                 #
+# ---------------------------------------------------------------------------- #
+# SECURITY WARNING: keep the secret key used in production secret!
+if "DJANGO_SECRET_KEY" not in os.environ:
+    raise ValueError("DJANGO_SECRET_KEY environment variable not set.")
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
+# Hosts
+if "DJANGO_ALLOWED_HOSTS" not in os.environ:
+    raise ValueError("DJANGO_ALLOWED_HOSTS environment variable not set.")
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS").split(",")
+
+# CSRF
+if "DJANGO_ALLOWED_ORIGINS" not in os.environ:
+    raise ValueError("DJANGO_ALLOWED_ORIGINS environment variable not set.")
+CSRF_TRUSTED_ORIGINS = os.getenv("DJANGO_ALLOWED_ORIGINS").split(",")
+
+CSRF_COOKIE_NAME = os.getenv("DJANGO_CSRF_COOKIE_NAME", "csrftoken")
+
+if "DJANGO_CSRF_COOKIE_DOMAIN" not in os.environ:
+    raise ValueError("DJANGO_CSRF_COOKIE_DOMAIN environment variable is not set.")
+CSRF_COOKIE_DOMAIN = os.getenv("DJANGO_CSRF_COOKIE_DOMAIN")
+
+CSRF_COOKIE_SAMESITE = "None"
+CSRF_COOKIE_SECURE = True
+
+# CORS settings
+CORS_ORIGIN_WHITELIST = os.getenv("DJANGO_ALLOWED_ORIGINS").split(",")
+
+CORS_ALLOW_METHODS = ["DELETE", "GET", "OPTIONS", "PATCH", "POST", "PUT"]
+
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+# Sessions
+if "DJANGO_SESSION_COOKIE_DOMAIN" not in os.environ:
+    raise ValueError("DJANGO_SESSION_COOKIE_DOMAIN environment variable is not set.")
+SESSION_COOKIE_DOMAIN = os.getenv("DJANGO_SESSION_COOKIE_DOMAIN")
+
+SESSION_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = False
+
+
+# ---------------------------------------------------------------------------- #
+#                                INSTALLED APPS                                #
+# ---------------------------------------------------------------------------- #
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    # ----------------------------------- CORS ----------------------------------- #
+    "corsheaders",  # Django CORS Headers
+    # ----------------------------------- REST ----------------------------------- #
+    "rest_framework",  # Django REST Framework
+    "drf_spectacular",  # Django Spectacular
+    "django_filters",  # Django Filters
 ]
 
+# ---------------------------------------------------------------------------- #
+#                                  MIDDLEWARE                                  #
+# ---------------------------------------------------------------------------- #
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'core.urls'
+# ---------------------------------------------------------------------------- #
+#                              URLS AND TEMPLATES                              #
+# ---------------------------------------------------------------------------- #
+ROOT_URLCONF = "core.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'core.wsgi.application'
+# ---------------------------------------------------------------------------- #
+#                                     WSGI                                     #
+# ---------------------------------------------------------------------------- #
+WSGI_APPLICATION = "core.wsgi.application"
 
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+# ---------------------------------------------------------------------------- #
+#                                   DATABASE                                   #
+# ---------------------------------------------------------------------------- #
+if not all(
+    [
+        "POSTGRES_DB_NAME" in os.environ,
+        "POSTGRES_USER" in os.environ,
+        "POSTGRES_PASSWORD" in os.environ,
+        "POSTGRES_HOST" in os.environ,
+        "POSTGRES_PORT" in os.environ,
+    ]
+):
+    raise ValueError(
+        "POSTGRES_DB_NAME, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_HOST or POSTGRES_PORT environment variables not set."
+    )
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("POSTGRES_DB_NAME"),
+        "USER": os.getenv("POSTGRES_USER"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "HOST": os.getenv("POSTGRES_HOST"),
+        "PORT": os.getenv("POSTGRES_PORT"),
     }
 }
 
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+# ---------------------------------------------------------------------------- #
+#                             Internationalization                             #
+# ---------------------------------------------------------------------------- #
+# https://docs.djangoproject.com/en/5.0/topics/i18n/
 
+LANGUAGE_CODE = "en-us"
 
-# Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
 USE_TZ = True
 
 
+# ---------------------------------------------------------------------------- #
+#                                AUTHENTICATION                                #
+# ---------------------------------------------------------------------------- #
+
+# AUTH_USER_MODEL = "authentication.User"
+
+# Password validation
+# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
+]
+
+
+# ---------------------------------------------------------------------------- #
+#                            STATIC AND MEDIA ROUTES                           #
+# ---------------------------------------------------------------------------- #
+
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
+# https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_URL = "static/"
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
+MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = "media/"
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# ---------------------------------------------------------------------------- #
+#                                REST FRAMEWORK                                #
+# ---------------------------------------------------------------------------- #
+
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.SessionAuthentication",
+        # "rest_framework.authentication.TokenAuthentication",
+    ),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    # "DEFAULT_THROTTLE_CLASSES": [
+    #     "rest_framework.throttling.AnonRateThrottle",
+    #     "rest_framework.throttling.UserRateThrottle",
+    #     "rest_framework.throttling.ScopedRateThrottle",
+    # ],
+    # "DEFAULT_THROTTLE_RATES": {
+    #     "anon": "10/hour",
+    #     "user": "200/minute",
+    # },
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "API",
+    "DESCRIPTION": "Description placeholder",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    # OTHER SETTINGS
+    "COMPONENT_SPLIT_REQUEST": True,
+}
