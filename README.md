@@ -135,14 +135,13 @@ Response:
 
 ### Environment Variables
 
-Create a `.env` file based on the `.env.template` file:
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `DJANGO_DEBUG` | Enable debug mode | `True` |
-| `DJANGO_SECRET_KEY` | Django security key | `super_secret_key` |
-| `DJANGO_ALLOWED_HOSTS` | Comma-separated list of allowed hosts | `waitlist.mydomain.com` |
-| `DJANGO_ALLOWED_ORIGINS` | Comma-separated list of allowed origins for CORS | `https://waitlist.mydomain.com` |
+| `DJANGO_DEBUG` | Enable debug mode | `False` |
+| `DJANGO_SECRET_KEY` | Django security key | - |
+| `DJANGO_ALLOWED_HOSTS` | Comma-separated list of allowed hosts | - |
+| `DJANGO_ALLOWED_ORIGINS` | Comma-separated list of allowed origins for CORS | - |
 | `POSTGRES_DB_NAME` | PostgreSQL database name | `django` |
 | `POSTGRES_USER` | PostgreSQL username | `django` |
 | `POSTGRES_PASSWORD` | PostgreSQL password | `django` |

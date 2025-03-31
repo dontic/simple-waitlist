@@ -293,5 +293,5 @@ SPECTACULAR_SETTINGS = {
 # ---------------------------------------------------------------------------- #
 #                                     NTFY                                     #
 # ---------------------------------------------------------------------------- #
-NTFY_URL = os.getenv("NTFY_URL")
+NTFY_URL = os.getenv("NTFY_URL", "https://ntfy.sh")
 NTFY_TOKEN = os.getenv("NTFY_TOKEN")
