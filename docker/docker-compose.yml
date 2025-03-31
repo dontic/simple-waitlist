@@ -1,3 +1,5 @@
+name: simple-waitlist
+
 services:
   # Postgres service
   # Remove this service if using an external Postgres server
