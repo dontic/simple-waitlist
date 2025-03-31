@@ -92,12 +92,12 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 # Hosts
 if "DJANGO_ALLOWED_HOSTS" not in os.environ:
     raise ValueError("DJANGO_ALLOWED_HOSTS environment variable not set.")
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS").split(",")
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
 
 # CSRF
 if "DJANGO_ALLOWED_ORIGINS" not in os.environ:
     raise ValueError("DJANGO_ALLOWED_ORIGINS environment variable not set.")
-CSRF_TRUSTED_ORIGINS = os.getenv("DJANGO_ALLOWED_ORIGINS").split(",")
+CSRF_TRUSTED_ORIGINS = os.getenv("DJANGO_ALLOWED_ORIGINS", "").split(",")
 
 CSRF_COOKIE_NAME = os.getenv("DJANGO_CSRF_COOKIE_NAME", "csrftoken")
 
@@ -109,7 +109,7 @@ CSRF_COOKIE_SAMESITE = "None"
 CSRF_COOKIE_SECURE = True
 
 # CORS settings
-CORS_ORIGIN_WHITELIST = os.getenv("DJANGO_ALLOWED_ORIGINS").split(",")
+CORS_ORIGIN_WHITELIST = os.getenv("DJANGO_ALLOWED_ORIGINS", "").split(",")
 
 CORS_ALLOW_METHODS = ["DELETE", "GET", "OPTIONS", "PATCH", "POST", "PUT"]
 
