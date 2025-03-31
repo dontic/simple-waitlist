@@ -78,6 +78,17 @@ docker-compose up -d
 
 3. Access the admin panel at http://localhost:8000/admin/
 
+> I suggest always putting this service behind a reverse proxy or tunnel with HTTPS and SSL
+
+### Initial configuration
+
+1. Log in with username `admin` and password `admin`
+2. Go to the Users menu and modify the admin user username and password to your liking
+3. Add any other users and/or groups that you need
+4. Create a new waitlist or contact list
+
+> Waitlists and contact lists will be created through an API request if they don't exist
+
 ### Updating
 
 1. Update the image
