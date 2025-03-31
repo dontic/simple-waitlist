@@ -286,3 +286,10 @@ SPECTACULAR_SETTINGS = {
     # OTHER SETTINGS
     "COMPONENT_SPLIT_REQUEST": True,
 }
+
+
+# ---------------------------------------------------------------------------- #
+#                                     NTFY                                     #
+# ---------------------------------------------------------------------------- #
+NTFY_URL = os.getenv("NTFY_URL")
+NTFY_TOKEN = os.getenv("NTFY_TOKEN")
