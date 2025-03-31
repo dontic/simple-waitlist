@@ -2,13 +2,15 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.response import Response
 from rest_framework import status
-from .models import ContactList, ContactMessage
+from .models import ContactMessage
 from .serializers import ContactMessageSerializer
 
 
 class ContactMessageViewSet(CreateModelMixin, GenericViewSet):
     queryset = ContactMessage.objects.all()
     serializer_class = ContactMessageSerializer
+    authentication_classes = []
+    permission_classes = []
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

@@ -11,6 +11,8 @@ from .serializers import WaitlistUserSerializer
 class WaitlistUserViewSet(CreateModelMixin, GenericViewSet):
     queryset = WaitlistUser.objects.all()
     serializer_class = WaitlistUserSerializer
+    authentication_classes = []
+    permission_classes = []
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
