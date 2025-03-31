@@ -149,7 +149,7 @@ Response:
 | `POSTGRES_PORT` | PostgreSQL port | `5432` |
 | `NTFY_URL` | ntfy service URL | `https://ntfy.sh` |
 | `NTFY_TOKEN` | ntfy authentication token | - |
-| `LOGGING_LOG_LEVEL` | Log level | `DEBUG` |
+| `LOGGING_LOG_LEVEL` | Log level | `INFO` |
 
 ## Notifications Setup
 
