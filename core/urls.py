@@ -22,14 +22,14 @@ from django.conf.urls.static import static
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 
-urlpatterns = (
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("waitlist/", include("waitlist.urls")),
+    path("contact/", include("contact.urls")),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns += (
     [
-        path("admin/", admin.site.urls),
-        path("waitlist/", include("waitlist.urls")),
-        path("contact/", include("contact.urls")),
-    ]
-    + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    + [
         path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
         path(
             "api/schema/swagger-ui/",
