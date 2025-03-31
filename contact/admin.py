@@ -1,5 +1,13 @@
 from django.contrib import admin
 from .models import ContactList, ContactMessage
+from import_export import resources
+from import_export.admin import ImportExportModelAdmin
+
+
+class ContactMessageResource(resources.ModelResource):
+    class Meta:
+        model = ContactMessage
+        fields = ("id", "name", "email", "message", "contact_list")
 
 
 @admin.register(ContactList)
@@ -9,7 +17,8 @@ class ContactListAdmin(admin.ModelAdmin):
 
 
 @admin.register(ContactMessage)
-class ContactMessageAdmin(admin.ModelAdmin):
+class ContactMessageAdmin(ImportExportModelAdmin):
+    resource_class = ContactMessageResource
     list_display = ("name", "email", "contact_list")
     list_filter = ("contact_list",)
     search_fields = ("name", "email", "message")

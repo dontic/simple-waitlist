@@ -134,6 +134,8 @@ INSTALLED_APPS = [
     "rest_framework",  # Django REST Framework
     "drf_spectacular",  # Django Spectacular
     "django_filters",  # Django Filters
+    # ------------------------------- IMPORT EXPORT ------------------------------ #
+    "import_export",  # Django Import Export
     # ----------------------------------- AUTH ----------------------------------- #
     "authentication",  # Authentication
     # ----------------------------------- APPS ----------------------------------- #
