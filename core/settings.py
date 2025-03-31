@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ---------------------------------------------------------------------------- #
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DJANGO_DEBUG", "True") == "True"
+DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"  # Default to False
 
 # Logging
 LOGGING_CONFIG = None  # Avoid Django logging setup
@@ -60,19 +60,19 @@ LOGGING = {
         },
         # Waitlist logger
         "waitlist": {
-            "level": os.getenv("LOGGING_LOG_LEVEL", "DEBUG"),
+            "level": os.getenv("LOGGING_LOG_LEVEL", "INFO"),
             "handlers": ["console"],
             "propagate": False,
         },
         # Contact logger
         "contact": {
-            "level": os.getenv("LOGGING_LOG_LEVEL", "DEBUG"),
+            "level": os.getenv("LOGGING_LOG_LEVEL", "INFO"),
             "handlers": ["console"],
             "propagate": False,
         },
-        # Utils logger
-        "utils": {
-            "level": os.getenv("LOGGING_LOG_LEVEL", "DEBUG"),
+        # Authentication logger
+        "authentication": {
+            "level": os.getenv("LOGGING_LOG_LEVEL", "INFO"),
             "handlers": ["console"],
             "propagate": False,
         },
@@ -84,7 +84,7 @@ logging.config.dictConfig(LOGGING)
 # ---------------------------------------------------------------------------- #
 #                                  CONNECTIONS                                 #
 # ---------------------------------------------------------------------------- #
-# SECURITY WARNING: keep the secret key used in production secret!
+# Secret key
 if "DJANGO_SECRET_KEY" not in os.environ:
     raise ValueError("DJANGO_SECRET_KEY environment variable not set.")
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
@@ -99,42 +99,23 @@ if "DJANGO_ALLOWED_ORIGINS" not in os.environ:
     raise ValueError("DJANGO_ALLOWED_ORIGINS environment variable not set.")
 CSRF_TRUSTED_ORIGINS = os.getenv("DJANGO_ALLOWED_ORIGINS", "").split(",")
 
+# For open API endpoints, consider disabling CSRF checks
 CSRF_COOKIE_NAME = os.getenv("DJANGO_CSRF_COOKIE_NAME", "csrftoken")
+CSRF_USE_SESSIONS = False  # Store the CSRF token in a cookie instead of the session
 
-if "DJANGO_CSRF_COOKIE_DOMAIN" not in os.environ:
-    raise ValueError("DJANGO_CSRF_COOKIE_DOMAIN environment variable is not set.")
-CSRF_COOKIE_DOMAIN = os.getenv("DJANGO_CSRF_COOKIE_DOMAIN")
-
-CSRF_COOKIE_SAMESITE = "None"
-CSRF_COOKIE_SECURE = True
+# For cross-domain requests
+CSRF_COOKIE_SAMESITE = "None"  # Allow the cookie to be sent in cross-site requests
+CSRF_COOKIE_SECURE = True  # Only send the cookie over HTTPS
 
 # CORS settings
 CORS_ORIGIN_WHITELIST = os.getenv("DJANGO_ALLOWED_ORIGINS", "").split(",")
 
 CORS_ALLOW_METHODS = ["DELETE", "GET", "OPTIONS", "PATCH", "POST", "PUT"]
 
-CORS_ALLOW_HEADERS = [
-    "accept",
-    "accept-encoding",
-    "authorization",
-    "content-type",
-    "dnt",
-    "origin",
-    "user-agent",
-    "x-csrftoken",
-    "x-requested-with",
-]
-
-CORS_ALLOW_CREDENTIALS = True
-
-# Sessions
-if "DJANGO_SESSION_COOKIE_DOMAIN" not in os.environ:
-    raise ValueError("DJANGO_SESSION_COOKIE_DOMAIN environment variable is not set.")
-SESSION_COOKIE_DOMAIN = os.getenv("DJANGO_SESSION_COOKIE_DOMAIN")
-
-SESSION_COOKIE_SAMESITE = "None"
-SESSION_COOKIE_SECURE = True
-SESSION_COOKIE_HTTPONLY = False
+# CORS settings - crucial for cross-domain requests
+CORS_ALLOW_ALL_ORIGINS = os.getenv("DJANGO_CORS_ALLOW_ALL", "False") == "True"
+CORS_ORIGIN_WHITELIST = os.getenv("DJANGO_ALLOWED_ORIGINS", "").split(",")
+CORS_ALLOW_CREDENTIALS = True  # Allow cookies to be included in cross-site requests
 
 
 # ---------------------------------------------------------------------------- #
@@ -165,6 +146,7 @@ INSTALLED_APPS = [
 # ---------------------------------------------------------------------------- #
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -203,27 +185,16 @@ WSGI_APPLICATION = "core.wsgi.application"
 # ---------------------------------------------------------------------------- #
 #                                   DATABASE                                   #
 # ---------------------------------------------------------------------------- #
-if not all(
-    [
-        "POSTGRES_DB_NAME" in os.environ,
-        "POSTGRES_USER" in os.environ,
-        "POSTGRES_PASSWORD" in os.environ,
-        "POSTGRES_HOST" in os.environ,
-        "POSTGRES_PORT" in os.environ,
-    ]
-):
-    raise ValueError(
-        "POSTGRES_DB_NAME, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_HOST or POSTGRES_PORT environment variables not set."
-    )
-
+# Postgres database
+# Defaults to local docker postgres instance
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("POSTGRES_DB_NAME"),
-        "USER": os.getenv("POSTGRES_USER"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
-        "HOST": os.getenv("POSTGRES_HOST"),
-        "PORT": os.getenv("POSTGRES_PORT"),
+        "NAME": os.getenv("POSTGRES_DB_NAME", "django"),
+        "USER": os.getenv("POSTGRES_USER", "django"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "django"),
+        "HOST": os.getenv("POSTGRES_HOST", "postgres"),
+        "PORT": os.getenv("POSTGRES_PORT", "5432"),
     }
 }
 
