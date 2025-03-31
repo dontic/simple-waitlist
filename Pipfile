@@ -14,6 +14,7 @@ python-dotenv = "*"
 psycopg2 = "*"
 gunicorn = "*"
 whitenoise = "*"
+requests = "*"
 
 [dev-packages]
 django-stubs = "*"
