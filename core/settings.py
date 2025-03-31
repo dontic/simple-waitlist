@@ -153,6 +153,8 @@ INSTALLED_APPS = [
     "rest_framework",  # Django REST Framework
     "drf_spectacular",  # Django Spectacular
     "django_filters",  # Django Filters
+    # ----------------------------------- AUTH ----------------------------------- #
+    "authentication",  # Authentication
 ]
 
 # ---------------------------------------------------------------------------- #
@@ -245,7 +247,7 @@ USE_TZ = True
 #                                AUTHENTICATION                                #
 # ---------------------------------------------------------------------------- #
 
-# AUTH_USER_MODEL = "authentication.User"
+AUTH_USER_MODEL = "authentication.User"
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
