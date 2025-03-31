@@ -1,0 +1,38 @@
+services:
+  # Postgres service
+  # Remove this service if using an external Postgres server
+  postgres:
+    image: postgres:16-bullseye
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: django
+      POSTGRES_USER: django
+      POSTGRES_PASSWORD: django
+    volumes:
+      # Mount the postgres data directory
+      - ./postgresdata:/var/lib/postgresql/data
+    # Uncomment the following to expose the Postgres port
+    # ports:
+    #   - 5432:5432
+
+  django:
+    image: dontic/simple-waitlist:latest
+    restart: unless-stopped
+    env:
+      - DJANGO_ALLOWED_HOSTS=waitlist.mydomain.com
+      - DJANGO_ALLOWED_ORIGINS=https://waitlist.mydomain.com,https://mywebsite1.com,https://mywebsite2.com
+      - DJANGO_SECRET_KEY=django
+      # - NTFY_URL=https://ntfy.sh
+      # - NTFY_TOKEN=my_ntfy_token
+      # - LOGGING_LOG_LEVEL=INFO
+      # - POSTGRES_DB_NAME=django
+      # - POSTGRES_USER=django
+      # - POSTGRES_PASSWORD=django
+      # - POSTGRES_HOST=postgres
+      # - POSTGRES_PORT=5432
+    entrypoint: /app/backend/docker/entrypoint-django.sh
+    ports:
+      - 8000:8000
+    depends_on:
+      postgres:
+        condition: service_healthy
