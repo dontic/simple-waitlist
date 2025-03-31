@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Waitlist, WaitlistItem
+from .models import Waitlist, WaitlistUser
 
 
 class WaitlistSerializer(serializers.ModelSerializer):
@@ -9,12 +9,12 @@ class WaitlistSerializer(serializers.ModelSerializer):
         read_only_fields = ["pk"]
 
 
-class WaitlistItemSerializer(serializers.ModelSerializer):
+class WaitlistUserSerializer(serializers.ModelSerializer):
     waitlist_name = serializers.CharField(write_only=True)
     waitlist = WaitlistSerializer(read_only=True)
 
     class Meta:
-        model = WaitlistItem
+        model = WaitlistUser
         fields = ["pk", "waitlist", "waitlist_name", "email"]
         read_only_fields = ["pk", "waitlist"]
 

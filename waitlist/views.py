@@ -2,15 +2,15 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import CreateModelMixin
-from .models import WaitlistItem
-from .serializers import WaitlistItemSerializer
+from .models import WaitlistUser
+from .serializers import WaitlistUserSerializer
 
 # Create your views here.
 
 
-class WaitlistItemViewSet(CreateModelMixin, GenericViewSet):
-    queryset = WaitlistItem.objects.all()
-    serializer_class = WaitlistItemSerializer
+class WaitlistUserViewSet(CreateModelMixin, GenericViewSet):
+    queryset = WaitlistUser.objects.all()
+    serializer_class = WaitlistUserSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

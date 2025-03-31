@@ -1,9 +1,9 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import WaitlistItemViewSet
+from .views import WaitlistUserViewSet
 
 router = DefaultRouter()
-router.register("waitlist-items", WaitlistItemViewSet)
+router.register("waitlist-users", WaitlistUserViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),

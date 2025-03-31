@@ -14,9 +14,9 @@ class Waitlist(models.Model):
         return self.name
 
 
-class WaitlistItem(models.Model):
+class WaitlistUser(models.Model):
     waitlist = models.ForeignKey(
-        Waitlist, on_delete=models.CASCADE, related_name="items"
+        Waitlist, on_delete=models.CASCADE, related_name="users"
     )
     email = models.EmailField()
 
