@@ -142,24 +142,28 @@ POST /contact/messages/
 Request body:
 ```json
 {
-  "contact_list_name": "support",
-  "name": "John Doe",
-  "email": "john@example.com",
-  "message": "I'm interested in your product. Please contact me."
+  "contact_list_name": "string",
+  "name": "string",
+  "email": "user@example.com",
+  "phone": "string",
+  "message": "string",
+  "other_fields": "string"
 }
 ```
 
 Response:
 ```json
 {
-  "pk": 1,
+  "pk": 0,
   "contact_list": {
-    "pk": 1,
-    "name": "support"
+    "pk": 0,
+    "name": "string"
   },
-  "name": "John Doe",
-  "email": "john@example.com",
-  "message": "I'm interested in your product. Please contact me."
+  "name": "string",
+  "email": "user@example.com",
+  "phone": "string",
+  "message": "string",
+  "other_fields": "string"
 }
 ```
 
