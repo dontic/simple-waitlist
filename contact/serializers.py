@@ -10,12 +10,21 @@ class ContactListSerializer(serializers.ModelSerializer):
 
 
 class ContactMessageSerializer(serializers.ModelSerializer):
-    contact_list_name = serializers.CharField(write_only=True, required=False)
+    contact_list_name = serializers.CharField(write_only=True, required=True)
     contact_list = ContactListSerializer(read_only=True)
 
     class Meta:
         model = ContactMessage
-        fields = ["pk", "contact_list", "contact_list_name", "name", "email", "message"]
+        fields = [
+            "pk",
+            "contact_list",
+            "contact_list_name",
+            "name",
+            "email",
+            "phone",
+            "message",
+            "other_fields",
+        ]
         read_only_fields = ["pk", "contact_list"]
 
     def create(self, validated_data):
